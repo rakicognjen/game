@@ -1,0 +1,165 @@
+import time
+
+# Define the dog character
+class Dog:
+    def __init__(self, name):
+        self.name = name
+        self.hunger = 100
+        self.energy = 100
+        self.location = "Home"
+        self.inventory = []
+
+    def eat(self):
+        self.hunger += 20
+        print(f"{self.name} eats and feels satisfied.")
+        self.energy += 10
+
+    def sleep(self):
+        self.energy += 30
+        print(f"{self.name} takes a nap and feels refreshed.")
+        self.hunger -= 10
+
+    def move(self, location):
+        self.location = location
+        self.hunger -= 10
+        self.energy -= 10
+        print(f"{self.name} moves to {location}.")
+
+    def add_to_inventory(self, item):
+        self.inventory.append(item)
+        print(f"{self.name} has picked up {item}.")
+
+# Locations in the game
+locations = {
+    "Home": "Your cozy home.",
+    "Forest": "A dense, mysterious forest.",
+    "Park": "A beautiful park with a pond.",
+    "Cave": "A dark cave filled with secrets.",
+    "Magical World": "A magical world beyond the cave.",
+    "Village": "A bustling village with friendly residents."
+}
+
+# Game introduction
+def introduction():
+    print("Welcome to 'What Are You Reading?'")
+    time.sleep(2)
+    print("You are a curious dog named Rover.")
+    time.sleep(2)
+    print("One day, you find a mysterious book that leads you on an adventure!")
+    time.sleep(2)
+    print("Your journey begins at your home.")
+    time.sleep(2)
+
+# Main game loop
+def main():
+    introduction()
+    rover = Dog("Rover")
+    squirrel_friend = False
+    found_map = False
+    solved_puzzle = False
+    unlocked_chest = False
+    solved_logic_puzzle = False
+
+    while True:
+        print(f"\n{rover.name}'s Stats:")
+        print(f"Hunger: {rover.hunger}%")
+        print(f"Energy: {rover.energy}%")
+        print(f"Location: {rover.location} - {locations[rover.location]}")
+
+        if rover.inventory:
+            print(f"Inventory: {', '.join(rover.inventory)}")
+
+        action = input("What would you like to do? (eat/sleep/move/read/interact/inventory/quit): ").lower()
+
+        if action == "eat":
+            rover.eat()
+        elif action == "sleep":
+            rover.sleep()
+        elif action == "move":
+            new_location = input("Where would you like to go? (forest/park/cave/home/magical world/village): ").title()
+            if new_location in locations:
+                rover.move(new_location)
+            else:
+                print("You can't go there.")
+        elif action == "read":
+            if rover.location == "Cave" and "Map" in rover.inventory:
+                print("You found a magic book! Let's read it...")
+                time.sleep(2)
+                print("The book transports you to a magical world!")
+                time.sleep(2)
+                if not solved_puzzle:
+                    print("You've entered a room with a logic puzzle.")
+                    print("There are three doors with signs: A, B, C.")
+                    print("Each sign corresponds to a certain logic.")
+                    print("You must choose the correct door.")
+                    door_choice = input("Which door do you choose? (A/B/C): ").lower()
+                    if door_choice == "b":
+                        print("You've chosen wisely and solved the logic puzzle! Congratulations, Rover!")
+                        solved_puzzle = True
+                    else:
+                        print("You've chosen the wrong door. Try again.")
+                else:
+                    if not unlocked_chest:
+                        print("You've completed your adventure and found a locked chest in a different room.")
+                        print("There's a hidden object puzzle in this room.")
+                        print("You must find and collect five hidden objects in the room.")
+                        hidden_objects = ["key", "gem", "book", "coin", "ring"]
+                        collected_objects = []
+                        while len(collected_objects) < 5:
+                            print(f"Hidden objects left to find: {', '.join(hidden_objects)}")
+                            search = input("Search for a hidden object: ").lower()
+                            if search in hidden_objects:
+                                collected_objects.append(search)
+                                hidden_objects.remove(search)
+                                rover.add_to_inventory(search)
+                                print(f"You've found a {search}!")
+                            else:
+                                print("There's nothing there.")
+                        unlocked_chest = True
+                        print("You've collected all hidden objects. The chest is now unlocked.")
+                        rover.add_to_inventory("Chest Key")
+                    else:
+                        print("You've already completed the puzzles in this room. Congratulations, Rover!")
+                break
+            elif rover.location == "Cave":
+                print("You need a map to read the book. Explore other places to find it.")
+            else:
+                print("You need to be in the cave to read the book.")
+        elif action == "interact":
+            if rover.location == "Forest" and not squirrel_friend:
+                print("You meet a friendly squirrel named Sammy in the forest!")
+                interaction = input("Would you like to befriend Sammy? (yes/no): ").lower()
+                if interaction == "yes":
+                    print("You and Sammy become friends. Sammy gives you an acorn as a gift!")
+                    squirrel_friend = True
+                    rover.add_to_inventory("Acorn")
+                else:
+                    print("Sammy hops away.")
+            elif rover.location == "Village":
+                print("You're in the village. You see a locked chest.")
+                if "Key" in rover.inventory:
+                    chest_action = input("Do you want to open the chest with the key? (yes/no): ").lower()
+                    if chest_action == "yes":
+                        print("You open the chest and find a golden key.")
+                        rover.add_to_inventory("Golden Key")
+                    else:
+                        print("You leave the chest alone for now.")
+                else:
+                    print("You need a key to open the chest.")
+            else:
+                print("There's nothing to interact with here.")
+        elif action == "inventory":
+            if rover.inventory:
+                print("Inventory items:")
+                for item in rover.inventory:
+                    print(f"- {item}")
+            else:
+                print("Your inventory is empty.")
+        elif action == "quit":
+            print("Thanks for playing 'What Are You Reading?'")
+            break
+        else:
+            print("Invalid command. Please try again.")
+
+if __name__ == "__main__":
+    main()
