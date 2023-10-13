@@ -1,83 +1,4 @@
-class Rooster:
-    def __init__(self, name, breed, strength):
-        self.name = name
-        self.breed = breed
-        self.strength = strength
-        self.health = 100
-        self.is_knocked_out = False
-
-    def __repr__(self):
-        return f"{self.name} ({self.breed}) | Strength: {self.strength} | Health: {self.health}"
-
-    def revive(self):
-        self.is_knocked_out = False
-        if self.health == 0:
-            self.health = 1
-        print(f"{self.name} was revived!")
-
-    def knock_out(self):
-        self.is_knocked_out = True
-        if self.health != 0:
-            self.health = 0
-        print(f"{self.name} was knocked out!")
-
-    def lose_health(self, amount):
-        self.health -= amount
-        if self.health <= 0:
-            self.health = 0
-            self.knock_out()
-        else:
-            print(f"{self.name} now has {self.health} health.")
-
-    def gain_health(self, amount):
-        if self.health == 0:
-            self.revive()
-        self.health += amount
-        if self.health >= 100:
-            self.health = 100
-        print(f"{self.name} now has {self.health} health.")
-
-    def attack(self, other_rooster):
-        if self.is_knocked_out:
-            print(f"{self.name} can't attack because it is knocked out!")
-            return
-
-        damage = self.strength
-        other_rooster.lose_health(damage)
-        print(f"{self.name} attacked {other_rooster.name} for {damage} damage!")
-
-class RoosterFight:
-    def __init__(self, rooster1, rooster2):
-        self.rooster1 = rooster1
-        self.rooster2 = rooster2
-
-    def start_fight(self):
-        while not self.rooster1.is_knocked_out and not self.rooster2.is_knocked_out:
-            self.rooster1.attack(self.rooster2)
-            if not self.rooster2.is_knocked_out:
-                self.rooster2.attack(self.rooster1)
-
-        if self.rooster1.is_knocked_out and self.rooster2.is_knocked_out:
-            print("It's a tie! Both roosters are knocked out.")
-        elif self.rooster1.is_knocked_out:
-            print(f"{self.rooster2.name} wins the fight!")
-        else:
-            print(f"{self.rooster1.name} wins the fight!")
-
-# Create two roosters
-rooster1 = Rooster("Rocky", "Barred Plymouth Rock", 15)
-rooster2 = Rooster("Feather", "Rhode Island Red", 12)
-
-# Initialize the fight
-fight = RoosterFight(rooster1, rooster2)
-
-print("Welcome to the Rooster Fight!")
-print("Here are the roosters:")
-print(rooster1)
-print(rooster2)
-
-input("Press Enter to start the fight...")
-fight.start_fight()
+import random
 
 class Rooster:
     def __init__(self, name, breed, strength):
@@ -118,12 +39,11 @@ class Rooster:
             self.health = 100
         print(f"{self.name} now has {self.health} health.")
 
-    def attack(self, other_rooster):
+    def attack(self, other_rooster, damage):
         if self.is_knocked_out:
             print(f"{self.name} can't attack because it is knocked out!")
             return
 
-        damage = self.strength
         other_rooster.lose_health(damage)
         print(f"{self.name} attacked {other_rooster.name} for {damage} damage!")
 
@@ -133,29 +53,69 @@ class RoosterFight:
         self.rooster2 = rooster2
 
     def start_fight(self):
-        while not self.rooster1.is_knocked_out and not self.rooster2.is_knocked_out:
-            self.rooster1.attack(self.rooster2)
-            if not self.rooster2.is_knocked_out:
-                self.rooster2.attack(self.rooster1)
+        print("Fight begins! Choose your rooster:")
+        print("1. Rocky")
+        print("2. Feather")
 
-        if self.rooster1.is_knocked_out and self.rooster2.is_knocked_out:
-            print("It's a tie! Both roosters are knocked out.")
-        elif self.rooster1.is_knocked_out:
-            print(f"{self.rooster2.name} wins the fight!")
+        player_choice = input("Enter 1 or 2 to choose your rooster: ")
+        if player_choice == '1':
+            player_rooster = self.rooster1
+            npc_rooster = self.rooster2
+        elif player_choice == '2':
+            player_rooster = self.rooster2
+            npc_rooster = self.rooster1
         else:
-            print(f"{self.rooster1.name} wins the fight!")
+            print("Invalid choice. You must select 1 or 2.")
+            return
 
-# Create two roosters
-rooster1 = Rooster("Rocky", "Barred Plymouth Rock", 15)
-rooster2 = Rooster("Feather", "Rhode Island Red", 12)
+        print(f"You've chosen {player_rooster.name} as your rooster.")
+        print(f"{npc_rooster.name} will be controlled by the NPC.")
 
-# Initialize the fight
-fight = RoosterFight(rooster1, rooster2)
+        while not player_rooster.is_knocked_out and not npc_rooster.is_knocked_out:
+            print(f"{player_rooster.name} vs. {npc_rooster.name}")
 
-print("Welcome to the Rooster Fight!")
-print("Here are the roosters:")
-print(rooster1)
-print(rooster2)
+            # Ask the user to choose an attack
+            user_input = input("Choose 1, 2, or 3 for your attack: ")
+            if user_input == '1':
+                damage = 5  # Peck (Low damage)
+            elif user_input == '2':
+                damage = 10  # Claw (Medium damage)
+            elif user_input == '3':
+                damage = 15  # Wing Strike (High damage)
+            else:
+                print("Invalid input. Choose 1, 2, or 3.")
+                continue
 
-input("Press Enter to start the fight...")
-fight.start_fight()
+            player_rooster.attack(npc_rooster, damage)
+
+            # NPC chooses a random attack
+            npc_attack = random.choice([5, 10, 15])
+            npc_rooster.attack(player_rooster, npc_attack)
+
+        if player_rooster.is_knocked_out and npc_rooster.is_knocked_out:
+            print("It's a tie! Both roosters are knocked out.")
+        elif player_rooster.is_knocked_out:
+            print(f"{npc_rooster.name} wins the fight!")
+        else:
+            print(f"{player_rooster.name} wins the fight!")
+
+def main():
+    rooster1 = Rooster("Rocky", "Barred Plymouth Rock", 15)
+    rooster2 = Rooster("Feather", "Rhode Island Red", 12)
+
+    fight = RoosterFight(rooster1, rooster2)
+
+    print("Welcome to the Rooster Fight!")
+    print("Here are the roosters:")
+    print(rooster1)
+    print(rooster2)
+
+    input("Press Enter to start the fight...")
+    fight.start_fight()
+
+    play_again = input("Do you want to play again? (yes/no): ").lower()
+    if play_again != 'yes':
+        print("Thanks for playing! Goodbye.")
+
+if __name__ == "__main__":
+    main()
